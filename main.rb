@@ -1,6 +1,6 @@
 require 'sdl'
 
-WIDTH = 800
+WIDTH = 650
 HEIGHT = 500
 BOARD_LEFT= 50
 BOARD_TOP=50
@@ -9,6 +9,8 @@ MENU_TOP=50
 
 SDL.init(SDL::INIT_EVERYTHING)
 screen = SDL.set_video_mode(WIDTH,HEIGHT,0,SDL::SWSURFACE)
+
+SDL::TTF.init
 
 white = 2
 black = 2
@@ -23,6 +25,7 @@ board = [
 	[0,0,0,0,0,0,0,0],
 	[0,0,0,0,0,0,0,0]
 ]
+
 
 loop do
 	t1 = Time.now
@@ -41,8 +44,8 @@ loop do
 	screen.lock
 
 	#screen_initialize
-	screen.fill_rect 0,0,WIDTH,HEIGHT,[100,100,100] #‹éŒ`“h‚è‚Â‚Ô‚µ
-	
+	screen.fill_rect 0,0,WIDTH,HEIGHT,[100,100,100]
+
 	#board_initialize
 	screen.fill_rect BOARD_LEFT, BOARD_TOP, 400, 400, [0,128,0]
 	9.times do |idx|
@@ -73,11 +76,22 @@ loop do
 		end
 	end
 
+	#menu_show
 	screen.draw_circle MENU_LEFT+25,MENU_TOP+25,20,[0,0,0],true
 	screen.draw_circle MENU_LEFT+25,MENU_TOP+75,20,[255,255,255],true
 
 	#screen unlock
 	screen.unlock
+
+	#font_draw
+	font = SDL::TTF.open("font/COLOA___.ttf", 32, 0)
+	font.draw_solid_utf8 screen,"REVERSI",50,10,250,250,200
+	font.close
+	font = SDL::TTF.open("font/COLOA___.ttf",30,0)
+	font.draw_solid_utf8 screen,sprintf("%02d",black),MENU_LEFT+60,MENU_TOP+10,255,255,255
+	font.draw_solid_utf8 screen,sprintf("%02d",white),MENU_LEFT+60,MENU_TOP+60,255,255,255
+	font.draw_solid_utf8 screen,"TURN",MENU_LEFT,MENU_TOP+150,255,255,200
+	font.close
 
 	#screen update
 	screen.update_rect(0,0,0,0)
