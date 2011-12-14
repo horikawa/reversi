@@ -79,6 +79,7 @@ loop do
 	#menu_show
 	screen.draw_circle MENU_LEFT+25,MENU_TOP+25,20,[0,0,0],true
 	screen.draw_circle MENU_LEFT+25,MENU_TOP+75,20,[255,255,255],true
+	screen.draw_circle MENU_LEFT+50,MENU_TOP+210,20,[0,0,0],true
 
 	#screen unlock
 	screen.unlock
