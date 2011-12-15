@@ -1,4 +1,5 @@
 require 'sdl'
+require './window.rb'
 
 WIDTH = 650
 HEIGHT = 500
@@ -7,8 +8,8 @@ BOARD_TOP=50
 MENU_LEFT=500
 MENU_TOP=50
 
-SDL.init(SDL::INIT_EVERYTHING)
-screen = SDL.set_video_mode(WIDTH,HEIGHT,0,SDL::SWSURFACE)
+window = Window.new
+screen = window.screen
 
 SDL::TTF.init
 
@@ -40,25 +41,11 @@ loop do
 		end
 	end
 
+	window.paint
+
 	#draw screen
 	screen.lock
 
-	#screen_initialize
-	screen.fill_rect 0,0,WIDTH,HEIGHT,[100,100,100]
-
-	#board_initialize
-	screen.fill_rect BOARD_LEFT, BOARD_TOP, 400, 400, [0,128,0]
-	9.times do |idx|
-		x0 = BOARD_LEFT + 50 * idx
-		y0 = BOARD_TOP
-		screen.draw_line x0, y0, x0, y0 + 400, [0,0,0]
-	end
-	9.times do |idx|
-		x0 = BOARD_LEFT
-		y0 = BOARD_TOP + 50 * idx
-		screen.draw_line x0, y0, x0 + 400, y0, [0,0,0]
-	end	
-	
 	#board_show
 	board.each_with_index do |line,row|
 		line.each_with_index do |elm,col|
