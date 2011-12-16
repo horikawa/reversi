@@ -43,6 +43,9 @@ class Stone
 	end
 
 	#draw stone on screen
+	# screen : SDL::Screen
+	# x      : int
+	# y      : int
 	#=> foo.show(screen, 100, 100)
 	def show(screen,x,y)
 		screen.lock
