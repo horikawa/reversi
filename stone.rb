@@ -4,6 +4,8 @@ class Stone
 	STATUS_BLACK=1
 	STATUS_WHITE=2
 
+	attr_accessor :status
+
 	#constructor
 	#=> foo = Stone.new
 	#=> foo = Stone.new(Stone::STATUS_WHITE)

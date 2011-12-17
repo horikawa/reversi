@@ -1,5 +1,8 @@
 require 'sdl'
 require './window.rb'
+require './board.rb'
+require './stone.rb'
+require './label.rb'
 
 WIDTH = 650
 HEIGHT = 500
@@ -10,23 +13,25 @@ MENU_TOP=50
 
 window = Window.new
 screen = window.screen
+board = Board.new
 
 SDL::TTF.init
 
-white = 2
-black = 2
+#data
+FIND=[1,2,3,6,7,8,11,12,13,16,17,18,21,22,23,26,27,28,31,32,33,36,37,38]
+white_num = 2
+black_num = 2
 player = 1
-board = [
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,2,1,0,0,0],
-	[0,0,0,1,2,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0],
-	[0,0,0,0,0,0,0,0]
-]
 
+#stons
+black = Stone.new(Stone::STATUS_BLACK)
+white = Stone.new(Stone::STATUS_WHITE)
+turn = Stone.new(Stone::STATUS_BLACK)
+
+#labels
+title = Label.new("Reversi",40,[100,200,0])
+slabel = Label.new("Score",40,[100,200,0])
+tlabel = Label.new("Tuen",40,[100,200,0])
 
 loop do
 	t1 = Time.now
@@ -37,49 +42,39 @@ loop do
 			when SDL::Event2::Quit
 				exit
 			when SDL::Event2::MouseButtonDown
-			when SDL::Event2::MouseMotion
-		end
-	end
-
-	window.paint
-
-	#draw screen
-	screen.lock
-
-	#board_show
-	board.each_with_index do |line,row|
-		line.each_with_index do |elm,col|
-			if elm!=0 then
-				x = BOARD_LEFT + row * 50 + 25
-				y = BOARD_TOP + col * 50 + 25
-				if elm==1 then
-					screen.draw_circle x+1,y+1,20,[255,255,255],true
-					screen.draw_circle x,y,20,[0,0,0],true
-				else
-					screen.draw_circle x+1,y+1,20,[0,0,0],true
-					screen.draw_circle x,y,20,[255,255,255],true
+				x = event.x
+				y = event.y
+				bx = (x - BOARD_LEFT)/10
+				by = (y - BOARD_TOP)/10
+				if FIND.include?(bx) and FIND.include?(by) then 
+					row = bx/5
+					col = by/5
+					if board.putable?(row,col,turn.status) then
+						board.put_stone(row,col,turn.status)
+						turn.reverse
+					end
 				end
-			end
+			when SDL::Event2::MouseMotion
+				x = event.x
+				y = event.y
 		end
 	end
 
-	#menu_show
-	screen.draw_circle MENU_LEFT+25,MENU_TOP+25,20,[0,0,0],true
-	screen.draw_circle MENU_LEFT+25,MENU_TOP+75,20,[255,255,255],true
-	screen.draw_circle MENU_LEFT+50,MENU_TOP+210,20,[0,0,0],true
+	#show background
+	window.draw_background
 
-	#screen unlock
-	screen.unlock
+	#show board
+	board.show(screen,BOARD_LEFT,BOARD_TOP)
 
-	#font_draw
-	font = SDL::TTF.open("font/COLOA___.ttf", 32, 0)
-	font.draw_solid_utf8 screen,"REVERSI",50,10,250,250,200
-	font.close
-	font = SDL::TTF.open("font/COLOA___.ttf",30,0)
-	font.draw_solid_utf8 screen,sprintf("%02d",black),MENU_LEFT+60,MENU_TOP+10,255,255,255
-	font.draw_solid_utf8 screen,sprintf("%02d",white),MENU_LEFT+60,MENU_TOP+60,255,255,255
-	font.draw_solid_utf8 screen,"TURN",MENU_LEFT,MENU_TOP+150,255,255,200
-	font.close
+	#show stones
+	black.show(screen,MENU_LEFT+25,MENU_TOP+25)
+	white.show(screen,MENU_LEFT+25,MENU_TOP+75)
+	turn.show(screen,MENU_LEFT+50,MENU_TOP+205)
+
+	#show labels
+	title.show(screen,52,5)
+	slabel.show(screen,480,5)
+	tlabel.show(screen,480,190)
 
 	#screen update
 	screen.update_rect(0,0,0,0)
